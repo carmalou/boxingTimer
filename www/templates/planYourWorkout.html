@@ -1,19 +1,51 @@
 <ion-view title="Plan your workout" id="page2" class=" ">
     <ion-content padding="true" class="has-header">
-        <form id="planYourWorkout-form1" class="list ">
+        <form id="planYourWorkout-form1" class="list " novalidate>
             <label class="item item-select " id="planYourWorkout-select1">
                 <span class="input-label">How many rounds?</span>
-                <select></select>
+                <select ng-model="workout.rounds">
+                  <option>1 Round</option>
+                  <option>2 Rounds</option>
+                  <option>3 Rounds</option>
+                  <option>4 Rounds</option>
+                  <option>5 Rounds</option>
+                  <option>6 Rounds</option>
+                  <option>7 Rounds</option>
+                  <option>8 Rounds</option>
+                  <option>9 Rounds</option>
+                  <option>10 Rounds</option>
+                  <option>11 Rounds</option>
+                  <option selected>12 Rounds</option>
+                </select>
             </label>
             <label class="item item-select " id="planYourWorkout-select2">
                 <span class="input-label">How long is each round?</span>
-                <select></select>
+                <select ng-model="workout.roundsTime">
+                  <option selected>3 Minutes</option>
+                  <option>2 Minutes, 30 Seconds</option>
+                  <option>2 Minutes</option>
+                  <option>90 Seconds</option>
+                  <option>60 Seconds</option>
+                  <option>30 Seconds</option>
+                </select>
             </label>
             <label class="item item-select " id="planYourWorkout-select3">
                 <span class="input-label">How long is each rest?</span>
-                <select></select>
+                <select ng-model="workout.restTime">
+                  <option>3 Minutes</option>
+                  <option>2 Minutes, 30 Seconds</option>
+                  <option>2 Minutes</option>
+                  <option>90 Seconds</option>
+                  <option selected>60 Seconds</option>
+                  <option>30 Seconds</option>
+                </select>
             </label>
         </form>
         <button id="planYourWorkout-button1" class=" button button-positive  button-block ">Start my workout!</button>
+
+        <p>$scope.workout.rounds == {{ $scope.workout.rounds }}</p>
+        <p>$scope.workout.roundTime == {{ $scope.workout.roundTime }}</p>
+        <p>$scope.workout.restTime == {{ $scope.workout.restTime }}</p>
+
     </ion-content>
 </ion-view>
