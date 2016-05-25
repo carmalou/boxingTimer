@@ -1,10 +1,5 @@
 angular.module('app.services', [])
 
-.factory('BlankFactory', [function(){
+.service('workoutFactory', [function(){
 
 }])
-
-.service('BlankService', [function(){
-
-}]);
-

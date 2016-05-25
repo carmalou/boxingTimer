@@ -4,48 +4,48 @@
             <label class="item item-select " id="planYourWorkout-select1">
                 <span class="input-label">How many rounds?</span>
                 <select ng-model="workout.rounds">
-                  <option>1 Round</option>
-                  <option>2 Rounds</option>
-                  <option>3 Rounds</option>
-                  <option>4 Rounds</option>
-                  <option>5 Rounds</option>
-                  <option>6 Rounds</option>
-                  <option>7 Rounds</option>
-                  <option>8 Rounds</option>
-                  <option>9 Rounds</option>
-                  <option>10 Rounds</option>
-                  <option>11 Rounds</option>
-                  <option selected>12 Rounds</option>
+                  <option value="1">1 Round</option>
+                  <option value="2">2 Rounds</option>
+                  <option value="3">3 Rounds</option>
+                  <option value="4">4 Rounds</option>
+                  <option value="5">5 Rounds</option>
+                  <option value="6">6 Rounds</option>
+                  <option value="7">7 Rounds</option>
+                  <option value="8">8 Rounds</option>
+                  <option value="9">9 Rounds</option>
+                  <option value="10">10 Rounds</option>
+                  <option value="11">11 Rounds</option>
+                  <option value="12" selected>12 Rounds</option>
                 </select>
             </label>
             <label class="item item-select " id="planYourWorkout-select2">
                 <span class="input-label">How long is each round?</span>
                 <select ng-model="workout.roundsTime">
-                  <option selected>3 Minutes</option>
-                  <option>2 Minutes, 30 Seconds</option>
-                  <option>2 Minutes</option>
-                  <option>90 Seconds</option>
-                  <option>60 Seconds</option>
-                  <option>30 Seconds</option>
+                  <option value="180" selected>3 Minutes</option>
+                  <option value="150">2 Minutes, 30 Seconds</option>
+                  <option value="120">2 Minutes</option>
+                  <option value="90">90 Seconds</option>
+                  <option value="60">60 Seconds</option>
+                  <option value="30">30 Seconds</option>
                 </select>
             </label>
             <label class="item item-select " id="planYourWorkout-select3">
                 <span class="input-label">How long is each rest?</span>
                 <select ng-model="workout.restTime">
-                  <option>3 Minutes</option>
-                  <option>2 Minutes, 30 Seconds</option>
-                  <option>2 Minutes</option>
-                  <option>90 Seconds</option>
-                  <option selected>60 Seconds</option>
-                  <option>30 Seconds</option>
+                  <option value="180">3 Minutes</option>
+                  <option value="150">2 Minutes, 30 Seconds</option>
+                  <option value="120">2 Minutes</option>
+                  <option value="90">90 Seconds</option>
+                  <option value="60" selected>60 Seconds</option>
+                  <option value="30">30 Seconds</option>
                 </select>
             </label>
         </form>
-        <button id="planYourWorkout-button1" class=" button button-positive  button-block ">Start my workout!</button>
+        <button id="planYourWorkout-button1" class="button button-positive button-block" ng-click="submitWorkout()">Start my workout!</button>
 
-        <p>$scope.workout.rounds == {{ $scope.workout.rounds }}</p>
-        <p>$scope.workout.roundTime == {{ $scope.workout.roundTime }}</p>
-        <p>$scope.workout.restTime == {{ $scope.workout.restTime }}</p>
+        <!-- <p>$scope.workout.rounds == {{ workout.rounds }}</p>
+        <p>$scope.workout.roundsTime == {{ workout.roundsTime }}</p>
+        <p>$scope.workout.restTime == {{ workout.restTime }}</p> -->
 
     </ion-content>
 </ion-view>
