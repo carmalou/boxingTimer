@@ -14,23 +14,23 @@ angular.module('app.controllers', [])
 
 })
 
-.controller('timerCtrl', function($scope, $state, workoutFactory) {
+.controller('timerCtrl', function($scope, $state, workoutFactory, $interval) {
   if(workoutFactory.workoutData == undefined) {
     return;
   }
   console.log('workoutFactory.workoutData', workoutFactory.workoutData);
 
-  $scope.seconds = undefined;
-  $scope.minutes = undefined;
-  $scope.hours = undefined;
   $scope.totalWorkoutMilliseconds = undefined;
-
   $scope.roundsCompleted = '0';
   $scope.roundsRemaining = workoutFactory.workoutData.rounds;
+  $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
+  $scope.singleRestTime = workoutFactory.workoutData.restTimeInMilliseconds;
   $scope.roundTimeRemaining = (workoutFactory.workoutData.roundsTimeInMilliseconds * workoutFactory.workoutData.rounds);
   $scope.totalTimeRemaining = ((workoutFactory.workoutData.restTimeInMilliseconds * (workoutFactory.workoutData.rounds - 1)) + $scope.roundTimeRemaining);
+  $scope.totalWorkoutMilliseconds = $scope.totalTimeRemaining;
 
   $scope.parseSeconds = function(totalMilliseconds) {
+    console.log('parseSeconds func');
     var timeObj = {};
     var seconds = totalMilliseconds / 1000;
     var minutes = seconds / 60;
@@ -44,13 +44,26 @@ angular.module('app.controllers', [])
     timeObj.minutes = Math.floor(minutes);
     timeObj.hours = Math.floor(hours);
 
+    console.log('timeObj', timeObj);
+
     return timeObj;
   };
 
   $scope.calculateWorkOut = function() {
     console.log('calc workout func');
+    $scope.totalWorkoutMilliseconds = $scope.totalWorkoutMilliseconds - 1;
+    $scope.singleRoundTime = $scope.singleRoundTime - 1;
+    console.log('singleRoundTime', $scope.singleRoundTime);
   };
 
-  $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.roundTimeRemaining);
+  // $scope.calculateWorkOut();
+
+  $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
   $scope.totalTimeRemainingObj = $scope.parseSeconds($scope.totalTimeRemaining);
+
+  $interval(function() {
+    $scope.calculateWorkOut();
+    $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
+    // $scope.totalTimeRemainingObj = $scope.parseSeconds($scope.totalTimeRemaining);
+  }, 1000);
 })
