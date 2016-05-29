@@ -21,13 +21,15 @@ angular.module('app.controllers', [])
   console.log('workoutFactory.workoutData', workoutFactory.workoutData);
 
   $scope.totalWorkoutMilliseconds = undefined;
-  $scope.roundsCompleted = '0';
+  $scope.roundsCompleted = 0;
   $scope.roundsRemaining = workoutFactory.workoutData.rounds;
+  $scope.restsRemaining = workoutFactory.workoutData.rounds - 1;
   $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
   $scope.singleRestTime = workoutFactory.workoutData.restTimeInMilliseconds;
   $scope.roundTimeRemaining = (workoutFactory.workoutData.roundsTimeInMilliseconds * workoutFactory.workoutData.rounds);
   $scope.totalTimeRemaining = ((workoutFactory.workoutData.restTimeInMilliseconds * (workoutFactory.workoutData.rounds - 1)) + $scope.roundTimeRemaining);
   $scope.totalWorkoutMilliseconds = $scope.totalTimeRemaining;
+  var roundInterval;
 
   $scope.parseSeconds = function(totalMilliseconds) {
     var timeObj = {};
@@ -51,23 +53,50 @@ angular.module('app.controllers', [])
 
   $scope.calculateWorkOut = function() {
     $scope.totalWorkoutMilliseconds = $scope.totalWorkoutMilliseconds - 1000;
-    $scope.singleRoundTime = $scope.singleRoundTime - 1000;
+    if($scope.singleRoundTime !== 0) {
+      $scope.singleRoundTime = $scope.singleRoundTime - 1000;
+    }
   };
 
   $scope.checkRounds = function() {
     if($scope.singleRoundTime <= 0) {
-      $timeout(function() {
-        $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
+      console.log('single round is less than or equal to zero');
+      console.log('$scope.roundsRemaining', $scope.roundsRemaining);
+      if($scope.roundsRemaining <= 0) {
+        $interval.cancel(roundInterval);
+        console.log('rounds remaining = 0');
+        $scope.singleRoundTime = 0;
         $scope.roundsCompleted = $scope.roundsCompleted + 1;
         $scope.roundsRemaining = $scope.roundsRemaining - 1;
-      }, $scope.singleRestTime);
+        return;
+      }
+      if($scope.restsRemaining > 0) {
+        $interval.cancel(roundInterval);
+        console.log('resting...');
+        $scope.singleRoundTime = 0;
+        $scope.restsRemaining = $scope.restsRemaining - 1;
+        console.log('$scope.restsRemaining', $scope.restsRemaining);
+        $timeout(function() {
+          console.log('in the timeout');
+          $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
+          $scope.roundsCompleted = $scope.roundsCompleted + 1;
+          $scope.roundsRemaining = $scope.roundsRemaining - 1;
+          $scope.roundIntervalFunc();
+        }, $scope.singleRestTime);
+      }
     }
-  }
+  };
 
-  $interval(function() {
-    $scope.checkRounds();
-    $scope.calculateWorkOut();
-    $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
-    $scope.totalTimeRemainingObj = $scope.parseSeconds($scope.totalTimeRemaining);
-  }, 1000);
+  $scope.roundIntervalFunc = function() {
+    roundInterval = $interval(function() {
+      $scope.checkRounds();
+      $scope.calculateWorkOut();
+      $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
+      $scope.totalTimeRemainingObj = $scope.parseSeconds($scope.totalTimeRemaining);
+      console.log('is this just stopping?');
+    }, 1000);
+  };
+
+  $scope.roundIntervalFunc();
+
 })
