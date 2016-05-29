@@ -60,32 +60,27 @@ angular.module('app.controllers', [])
 
   $scope.checkRounds = function() {
     if($scope.singleRoundTime <= 0) {
-      console.log('single round is less than or equal to zero');
-      console.log('$scope.roundsRemaining', $scope.roundsRemaining);
+      $scope.incrementRounds();
       if($scope.roundsRemaining <= 0) {
-        $interval.cancel(roundInterval);
-        console.log('rounds remaining = 0');
         $scope.singleRoundTime = 0;
-        $scope.roundsCompleted = $scope.roundsCompleted + 1;
-        $scope.roundsRemaining = $scope.roundsRemaining - 1;
         return;
       }
       if($scope.restsRemaining > 0) {
-        $interval.cancel(roundInterval);
-        console.log('resting...');
         $scope.singleRoundTime = 0;
         $scope.restsRemaining = $scope.restsRemaining - 1;
-        console.log('$scope.restsRemaining', $scope.restsRemaining);
         $timeout(function() {
-          console.log('in the timeout');
           $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
-          $scope.roundsCompleted = $scope.roundsCompleted + 1;
-          $scope.roundsRemaining = $scope.roundsRemaining - 1;
           $scope.roundIntervalFunc();
         }, $scope.singleRestTime);
       }
     }
   };
+
+  $scope.incrementRounds = function() {
+    $interval.cancel(roundInterval);
+    $scope.roundsCompleted = $scope.roundsCompleted + 1;
+    $scope.roundsRemaining = $scope.roundsRemaining - 1;
+  }
 
   $scope.roundIntervalFunc = function() {
     roundInterval = $interval(function() {
