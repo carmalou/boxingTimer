@@ -14,7 +14,7 @@ angular.module('app.controllers', [])
 
 })
 
-.controller('timerCtrl', function($scope, $state, workoutFactory, $interval, $timeout) {
+.controller('timerCtrl', function($scope, $state, workoutFactory, $interval, $timeout, $ionicPopup) {
   if(workoutFactory.workoutData == undefined) {
     return;
   }
@@ -27,6 +27,7 @@ angular.module('app.controllers', [])
   $scope.singleRestTime = workoutFactory.workoutData.restTimeInMilliseconds;
   $scope.roundTimeRemaining = (workoutFactory.workoutData.roundsTimeInMilliseconds * workoutFactory.workoutData.rounds);
   var roundInterval;
+  var popup;
 
   $scope.parseSeconds = function(totalMilliseconds) {
     var timeObj = {};
@@ -59,6 +60,13 @@ angular.module('app.controllers', [])
     $scope.roundsRemaining = $scope.roundsRemaining - 1;
   };
 
+  $scope.restPopup = function() {
+    popup = $ionicPopup.show({
+      title: 'Take a break!',
+      scope: $scope
+    });
+  };
+
   $scope.checkRounds = function() {
     if($scope.singleRoundTime <= 0) {
       $scope.incrementRounds();
@@ -69,7 +77,14 @@ angular.module('app.controllers', [])
       if($scope.restsRemaining > 0) {
         $scope.singleRoundTime = 0;
         $scope.restsRemaining = $scope.restsRemaining - 1;
+        $scope.restPopup();
+        var restInterval = $interval(function() {
+          console.log('resting...');
+          $scope.singleRestTime = $scope.singleRestTime - 1000;
+        }, 1000)
         $timeout(function() {
+          $interval.cancel(restInterval);
+          popup.close();
           $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
           $scope.roundIntervalFunc();
         }, $scope.singleRestTime);
