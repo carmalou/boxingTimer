@@ -1,5 +1,5 @@
 <ion-view title="Plan your workout" id="page2" class=" ">
-    <ion-content padding="true" class="has-header">
+    <ion-content padding="true" class="has-header boxing-background">
         <form id="planYourWorkout-form1" class="list " novalidate>
             <label class="item item-select " id="planYourWorkout-select1">
                 <span class="input-label">How many rounds?</span>
@@ -19,7 +19,7 @@
                 </select>
             </label>
             <label class="item item-select " id="planYourWorkout-select2">
-                <span class="input-label">How long is each round?</span>
+                <span class="input-label">Round Time</span>
                 <select ng-model="workout.roundsTime">
                   <option value="180" selected>3 Minutes</option>
                   <option value="150">2 Minutes, 30 Seconds</option>
@@ -30,7 +30,7 @@
                 </select>
             </label>
             <label class="item item-select " id="planYourWorkout-select3">
-                <span class="input-label">How long is each rest?</span>
+                <span class="input-label">Rest Time</span>
                 <select ng-model="workout.restTime">
                   <option value="180">3 Minutes</option>
                   <option value="150">2 Minutes, 30 Seconds</option>
@@ -42,10 +42,5 @@
             </label>
         </form>
         <button id="planYourWorkout-button1" class="button button-dark button-block" ng-click="submitWorkout()">Start my workout!</button>
-
-        <!-- <p>$scope.workout.rounds == {{ workout.rounds }}</p>
-        <p>$scope.workout.roundsTime == {{ workout.roundsTime }}</p>
-        <p>$scope.workout.restTime == {{ workout.restTime }}</p> -->
-
     </ion-content>
 </ion-view>
