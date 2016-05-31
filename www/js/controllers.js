@@ -14,7 +14,7 @@ angular.module('app.controllers', [])
 
 })
 
-.controller('timerCtrl', function($scope, $state, workoutFactory, $interval, $timeout, $ionicPopup) {
+.controller('timerCtrl', function($scope, $state, workoutFactory, $interval, $timeout, $ionicPopup, $cordovaMedia) {
   if(workoutFactory.workoutData == undefined) {
     return;
   }
@@ -90,6 +90,23 @@ angular.module('app.controllers', [])
         }, $scope.singleRestTime);
       }
     }
+  };
+
+  $scope.playSound = function(filepath) {
+    var src = filepath;
+    var media = $cordovaMedia.newMedia(src);
+    media.play();
+
+    // if(ionic.Platform.isAndroid()) {
+    //   src = '/android_asset/www/sounds/Air-Horn.mp3';
+    //   var media = $cordovaMedia.newMedia(src);
+    //   media.play();
+    // }
+    // if(var isIOS = ionic.Platform.isIOS()) {
+    //   src = '/www/sounds/Air-Horn.mp3';
+    //   var media = $cordovaMedia.newMedia(src);
+    //   media.play();
+    // }
   };
 
   $scope.roundIntervalFunc = function() {
