@@ -16,7 +16,8 @@ $royal:                           #886aea !default;
 $dark:                            #444 !default;
 */
 ion-content.boxing-background {
-  background-image: url("./../img/boxing-gloves.jpg"); }
+  background-image: url("./../img/boxing-gloves.jpg");
+  background-size: auto; }
 
 /*!
   Ionicons, v2.0.1
