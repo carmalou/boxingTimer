@@ -1,9 +1,18 @@
 angular.module('app.controllers', [])
 
 .controller('planYourWorkoutCtrl', function($scope, $state, workoutFactory) {
-  $scope.workout = {};
+  $scope.workout = {
+    rounds: '12',
+    roundsTime: '180',
+    restTime: '30'
+  };
 
   $scope.submitWorkout = function() {
+
+    $scope.workout.rounds = Number($scope.workout.rounds);
+    $scope.workout.roundsTime = Number($scope.workout.roundsTime);
+    $scope.workout.restTime = Number($scope.workout.restTime);
+
     $scope.workout.roundsTimeInMilliseconds = ($scope.workout.roundsTime * 1000);
     $scope.workout.restTimeInMilliseconds = ($scope.workout.restTime * 1000);
 
@@ -86,6 +95,7 @@ angular.module('app.controllers', [])
           $interval.cancel(restInterval);
           popup.close();
           $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
+          $scope.singleRestTime = workoutFactory.workoutData.restTimeInMilliseconds;
           $scope.roundIntervalFunc();
         }, $scope.singleRestTime);
       }
