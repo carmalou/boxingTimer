@@ -52,8 +52,19 @@ angular.module('app.controllers', [])
     timeObj.minutes = Math.floor(minutes);
     timeObj.hours = Math.floor(hours);
 
+    timeObj.seconds = $scope.addZero(timeObj.seconds);
+    timeObj.minutes = $scope.addZero(timeObj.minutes);
+    timeObj.hours = $scope.addZero(timeObj.hours);
+
     return timeObj;
   };
+
+  $scope.addZero = function(num) {
+    if(num < 10) {
+      num = '0' + num;
+    }
+    return num;
+  }
 
   $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
 
