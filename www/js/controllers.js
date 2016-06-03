@@ -75,6 +75,7 @@ angular.module('app.controllers', [])
   };
 
   $scope.incrementRounds = function() {
+    $scope.playSound('sounds/Air-Horn.mp3');
     $interval.cancel(roundInterval);
     $scope.roundsCompleted = $scope.roundsCompleted + 1;
     $scope.roundsRemaining = $scope.roundsRemaining - 1;
@@ -103,6 +104,7 @@ angular.module('app.controllers', [])
           $scope.singleRestTime = $scope.singleRestTime - 1000;
         }, 1000)
         $timeout(function() {
+          console.log('timeout');
           $interval.cancel(restInterval);
           popup.close();
           $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
@@ -114,6 +116,10 @@ angular.module('app.controllers', [])
   };
 
   $scope.playSound = function(filepath) {
+    if(ionic.Platform.isIOS() !== true || ionic.Platform.isAndroid() !== true) {
+      return;
+    }
+    console.log('play sound');
     var src = filepath;
     var media = $cordovaMedia.newMedia(src);
     media.play();
@@ -131,6 +137,7 @@ angular.module('app.controllers', [])
   };
 
   $scope.roundIntervalFunc = function() {
+    $scope.playSound('sounds/Boxing_arena.mp3');
     roundInterval = $interval(function() {
       $scope.checkRounds();
       $scope.calculateWorkOut();
