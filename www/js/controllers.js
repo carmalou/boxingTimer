@@ -116,24 +116,18 @@ angular.module('app.controllers', [])
   };
 
   $scope.playSound = function(filepath) {
-    if(ionic.Platform.isIOS() !== true || ionic.Platform.isAndroid() !== true) {
+    var currentPlatform = ionic.Platform.platform();
+    if(ionic.Platform.isIOS() !== true && ionic.Platform.isAndroid() !== true) {
+      console.log('if statement return');
       return;
     }
-    console.log('play sound');
     var src = filepath;
+    if(ionic.Platform.isAndroid()) {
+      src = '/android_asset/www/' + src;
+      console.log(src);
+    }
     var media = $cordovaMedia.newMedia(src);
     media.play();
-
-    // if(ionic.Platform.isAndroid()) {
-    //   src = '/android_asset/www/sounds/Air-Horn.mp3';
-    //   var media = $cordovaMedia.newMedia(src);
-    //   media.play();
-    // }
-    // if(var isIOS = ionic.Platform.isIOS()) {
-    //   src = '/www/sounds/Air-Horn.mp3';
-    //   var media = $cordovaMedia.newMedia(src);
-    //   media.play();
-    // }
   };
 
   $scope.roundIntervalFunc = function() {
@@ -142,7 +136,6 @@ angular.module('app.controllers', [])
       $scope.checkRounds();
       $scope.calculateWorkOut();
       $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
-      console.log('is this just stopping?');
     }, 1000);
   };
 
