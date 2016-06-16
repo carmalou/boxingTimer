@@ -1,10 +1,12 @@
 angular.module('app.controllers', [])
 
 .controller('planYourWorkoutCtrl', function($scope, $state, workoutFactory) {
-  $scope.workout = {
-    rounds: '12',
-    roundsTime: '180',
-    restTime: '30'
+  $scope.setWorkout = function() {
+    $scope.workout = {
+      rounds: '12',
+      roundsTime: '180',
+      restTime: '60'
+    };
   };
 
   $scope.submitWorkout = function() {
@@ -20,6 +22,10 @@ angular.module('app.controllers', [])
 
     $state.go('tabsController.timer');
   };
+
+  $scope.$on('$ionicView.beforeEnter', function() {
+    $scope.setWorkout();
+  });
 
 })
 
@@ -130,6 +136,15 @@ angular.module('app.controllers', [])
     media.play();
   };
 
+  $scope.resetObjs = function() {
+    $scope.roundsCompleted = undefined;
+    $scope.roundsRemaining = undefined;
+    $scope.restsRemaining = undefined;
+    $scope.singleRoundTime = undefined;
+    $scope.singleRestTime = undefined;
+    $scope.roundTimeRemaining = undefined;
+  }
+
   $scope.roundIntervalFunc = function() {
     $scope.playSound('sounds/Boxing_arena.mp3');
     roundInterval = $interval(function() {
@@ -139,6 +154,12 @@ angular.module('app.controllers', [])
     }, 1000);
   };
 
-  $scope.roundIntervalFunc();
+  $scope.$on('$ionicView.enter', function() {
+    $scope.roundIntervalFunc();
+  });
+
+  $scope.$on('$ionicView.beforeLeave', function() {
+    $scope.resetObjs();
+  });
 
 })
