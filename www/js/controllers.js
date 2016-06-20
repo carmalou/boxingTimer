@@ -35,14 +35,23 @@ angular.module('app.controllers', [])
   }
   console.log('workoutFactory.workoutData', workoutFactory.workoutData);
 
-  $scope.roundsCompleted = 0;
-  $scope.roundsRemaining = workoutFactory.workoutData.rounds;
-  $scope.restsRemaining = workoutFactory.workoutData.rounds - 1;
-  $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
-  $scope.singleRestTime = workoutFactory.workoutData.restTimeInMilliseconds;
-  $scope.roundTimeRemaining = (workoutFactory.workoutData.roundsTimeInMilliseconds * workoutFactory.workoutData.rounds);
+  $scope.roundsCompleted = undefined;
+  $scope.roundsRemaining = undefined;
+  $scope.restsRemaining = undefined;
+  $scope.singleRoundTime = undefined;
+  $scope.singleRestTime = undefined;
+  $scope.roundTimeRemaining = undefined;
   var roundInterval;
   var popup;
+
+  $scope.setVariables = function() {
+    $scope.roundsCompleted = 0;
+    $scope.roundsRemaining = workoutFactory.workoutData.rounds;
+    $scope.restsRemaining = workoutFactory.workoutData.rounds - 1;
+    $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
+    $scope.singleRestTime = workoutFactory.workoutData.restTimeInMilliseconds;
+    $scope.roundTimeRemaining = (workoutFactory.workoutData.roundsTimeInMilliseconds * workoutFactory.workoutData.rounds);
+  };
 
   $scope.parseSeconds = function(totalMilliseconds) {
     var timeObj = {};
@@ -105,13 +114,8 @@ angular.module('app.controllers', [])
         $scope.singleRoundTime = 0;
         $scope.restsRemaining = $scope.restsRemaining - 1;
         $scope.restPopup();
-        var restInterval = $interval(function() {
-          console.log('resting...');
-          $scope.singleRestTime = $scope.singleRestTime - 1000;
-        }, 1000)
         $timeout(function() {
           console.log('timeout');
-          $interval.cancel(restInterval);
           popup.close();
           $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
           $scope.singleRestTime = workoutFactory.workoutData.restTimeInMilliseconds;
@@ -137,28 +141,40 @@ angular.module('app.controllers', [])
   };
 
   $scope.resetObjs = function() {
+    console.log('resetObjs');
     $scope.roundsCompleted = undefined;
     $scope.roundsRemaining = undefined;
     $scope.restsRemaining = undefined;
     $scope.singleRoundTime = undefined;
     $scope.singleRestTime = undefined;
     $scope.roundTimeRemaining = undefined;
+    workoutFactory.workoutData = {};
   }
 
   $scope.roundIntervalFunc = function() {
+    if(!$scope.singleRoundTime) {
+      return;
+    }
+    console.log('roundIntervalFunc');
     $scope.playSound('sounds/Boxing_arena.mp3');
     roundInterval = $interval(function() {
+      $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
       $scope.checkRounds();
       $scope.calculateWorkOut();
-      $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
     }, 1000);
   };
 
+  $scope.$on('$ionicView.beforeEnter', function() {
+    $scope.setVariables();
+  });
+
   $scope.$on('$ionicView.enter', function() {
+    console.log('onEnter');
     $scope.roundIntervalFunc();
   });
 
   $scope.$on('$ionicView.beforeLeave', function() {
+    console.log('beforeLeave');
     $scope.resetObjs();
   });
 
