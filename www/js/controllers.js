@@ -129,6 +129,9 @@ angular.module('app.controllers', [])
   };
 
   $scope.playSound = function(filepath) {
+    if(media) {
+      media.release();
+    }
     var currentPlatform = ionic.Platform.platform();
     if(ionic.Platform.isIOS() !== true && ionic.Platform.isAndroid() !== true) {
       console.log('if statement return');
