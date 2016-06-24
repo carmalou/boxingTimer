@@ -18,6 +18,7 @@ angular.module('app.controllers', [])
     $scope.workout.restTimeInMilliseconds = ($scope.workout.restTime * 1000);
 
     workoutFactory.workoutData = $scope.workout;
+    workoutFactory.workoutData.timerStarted = false;
 
     $state.go('tabsController.timer');
   };
@@ -166,9 +167,6 @@ angular.module('app.controllers', [])
   };
 
   $scope.$on('$ionicView.beforeEnter', function() {
-    console.log('beforeEnter');
-    console.log('obj', workoutFactory.workoutData);
-    console.log('wtf', workoutFactory.workoutData.timerStarted);
     if(workoutFactory.workoutData == undefined || workoutFactory.workoutData.timerStarted == true) {
       return;
     }
@@ -177,10 +175,6 @@ angular.module('app.controllers', [])
   });
 
   $scope.$on('$ionicView.enter', function() {
-    console.log('onEnter');
-    console.log('obj', workoutFactory.workoutData);
-    console.log('double wtf', workoutFactory.workoutData.restTime);
-    console.log('wtf', workoutFactory.workoutData.timerStarted);
     if(workoutFactory.workoutData == undefined || workoutFactory.workoutData.timerStarted == true) {
       return;
     }
