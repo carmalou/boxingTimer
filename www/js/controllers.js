@@ -29,8 +29,24 @@ angular.module('app.controllers', [])
 
 })
 
-.controller('timerCtrl', function($scope, $state, workoutFactory, $interval, $timeout, $ionicPopup, $cordovaMedia) {
+.controller('timerCtrl', function($scope, $state, workoutFactory, $interval, $timeout, $ionicPopup, $cordovaMedia, $cordovaNativeAudio) {
   console.log('workoutFactory.workoutData', workoutFactory.workoutData);
+
+  $cordovaNativeAudio
+    .preloadSimple('endOfRound', 'sounds/Air-Horn.mp3');
+    .then(function(msg) {
+      console.log(msg);
+    }, function(error) {
+      console.log(error);
+    });
+
+  $cordovaNativeAudio
+    .preloadSimple('endOfRest', 'sounds/Boxing_arena.mp3');
+    .then(function(msg) {
+      console.log(msg);
+    }, function(error) {
+      console.log(error);
+    });
 
   $scope.roundsCompleted = undefined;
   $scope.roundsRemaining = undefined;
@@ -94,7 +110,7 @@ angular.module('app.controllers', [])
   };
 
   $scope.incrementRounds = function() {
-    $scope.playSound('sounds/Air-Horn.mp3');
+    $scope.playSound('rest');
     $interval.cancel(roundInterval);
     $scope.roundsCompleted = $scope.roundsCompleted + 1;
     $scope.roundsRemaining = $scope.roundsRemaining - 1;
@@ -120,6 +136,8 @@ angular.module('app.controllers', [])
         $scope.restPopup();
         $timeout(function() {
           popup.close();
+          $cordovaNativeAudio.unload('round');
+          $cordovaNativeAudio.unload('rest');
           $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
           $scope.singleRestTime = workoutFactory.workoutData.restTimeInMilliseconds;
           $scope.roundIntervalFunc();
@@ -128,21 +146,31 @@ angular.module('app.controllers', [])
     }
   };
 
-  $scope.playSound = function(filepath) {
-    if(media) {
-      media.release();
+  // $scope.playSound = function(filepath) {
+  //   // if(media) {
+  //   //   media.release();
+  //   // }
+  //   var currentPlatform = ionic.Platform.platform();
+  //   if(ionic.Platform.isIOS() !== true && ionic.Platform.isAndroid() !== true) {
+  //     console.log('if statement return');
+  //     return;
+  //   }
+  //   var src = filepath;
+  //   if(ionic.Platform.isAndroid()) {
+  //     src = '/android_asset/www/' + src;
+  //   }
+  //   // var media = $cordovaMedia.newMedia(src);
+  //   // media.play();
+  //   // media.release();
+  // };
+
+  $scope.playSound = function(roundOrRest) {
+    if(roundOrRest == 'round') {
+      $cordovaNativeAudio.play('endOfRound');
     }
-    var currentPlatform = ionic.Platform.platform();
-    if(ionic.Platform.isIOS() !== true && ionic.Platform.isAndroid() !== true) {
-      console.log('if statement return');
-      return;
+    if(roundOrRest == 'rest') {
+      $cordovaNativeAudio.play('endOfRest');
     }
-    var src = filepath;
-    if(ionic.Platform.isAndroid()) {
-      src = '/android_asset/www/' + src;
-    }
-    var media = $cordovaMedia.newMedia(src);
-    media.play();
   };
 
   $scope.resetObjs = function() {
@@ -161,7 +189,7 @@ angular.module('app.controllers', [])
     if(!$scope.singleRoundTime) {
       return;
     }
-    $scope.playSound('sounds/Boxing_arena.mp3');
+    $scope.playSound('round');
     roundInterval = $interval(function() {
       $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
       $scope.checkRounds();
