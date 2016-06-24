@@ -2,7 +2,6 @@ angular.module('app.controllers', [])
 
 .controller('planYourWorkoutCtrl', function($scope, $state, workoutFactory) {
   $scope.setWorkout = function() {
-    console.log('setWorkout');
     $scope.workout = {
       rounds: '12',
       roundsTime: '180',
@@ -11,8 +10,6 @@ angular.module('app.controllers', [])
   };
 
   $scope.submitWorkout = function() {
-    console.log('submitWorkout');
-
     $scope.workout.rounds = Number($scope.workout.rounds);
     $scope.workout.roundsTime = Number($scope.workout.roundsTime);
     $scope.workout.restTime = Number($scope.workout.restTime);
@@ -26,16 +23,12 @@ angular.module('app.controllers', [])
   };
 
   $scope.$on('$ionicView.beforeEnter', function() {
-    console.log('beforeEnter planning');
     $scope.setWorkout();
   });
 
 })
 
 .controller('timerCtrl', function($scope, $state, workoutFactory, $interval, $timeout, $ionicPopup, $cordovaMedia) {
-  if(workoutFactory.workoutData == undefined) {
-    return;
-  }
   console.log('workoutFactory.workoutData', workoutFactory.workoutData);
 
   $scope.roundsCompleted = undefined;
@@ -48,16 +41,19 @@ angular.module('app.controllers', [])
   var popup;
 
   $scope.setVariables = function() {
+    if(roundInterval) {
+      $interval.cancel(roundInterval);
+      roundInterval = undefined;
+    }
     $scope.roundsCompleted = 0;
-    $scope.roundsRemaining = workoutFactory.workoutData.rounds || 0;
+    $scope.roundsRemaining = workoutFactory.workoutData.rounds;
     $scope.restsRemaining = workoutFactory.workoutData.rounds - 1;
     $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
     $scope.singleRestTime = workoutFactory.workoutData.restTimeInMilliseconds;
-    $scope.roundTimeRemaining = (workoutFactory.workoutData.roundsTimeInMilliseconds * workoutFactory.workoutData.rounds) || 0;
+    $scope.roundTimeRemaining = (workoutFactory.workoutData.roundsTimeInMilliseconds * workoutFactory.workoutData.rounds);
   };
 
   $scope.parseSeconds = function(totalMilliseconds) {
-    console.log('parseSeconds');
     var timeObj = {};
     var seconds = totalMilliseconds / 1000;
     var minutes = seconds / 60;
@@ -79,10 +75,7 @@ angular.module('app.controllers', [])
   };
 
   $scope.addZero = function(num) {
-    console.log('addZero');
-    console.log('typeof num', typeof num);
-    if(num === undefined || num === null) {
-      console.log('undefined/null');
+    if(num == undefined) {
       return '00';
     }
     if(num < 10) {
@@ -125,7 +118,6 @@ angular.module('app.controllers', [])
         $scope.restsRemaining = $scope.restsRemaining - 1;
         $scope.restPopup();
         $timeout(function() {
-          console.log('timeout');
           popup.close();
           $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
           $scope.singleRestTime = workoutFactory.workoutData.restTimeInMilliseconds;
@@ -144,14 +136,12 @@ angular.module('app.controllers', [])
     var src = filepath;
     if(ionic.Platform.isAndroid()) {
       src = '/android_asset/www/' + src;
-      console.log(src);
     }
     var media = $cordovaMedia.newMedia(src);
     media.play();
   };
 
   $scope.resetObjs = function() {
-    console.log('resetObjs');
     $scope.roundsCompleted = undefined;
     $scope.roundsRemaining = undefined;
     $scope.restsRemaining = undefined;
@@ -159,33 +149,49 @@ angular.module('app.controllers', [])
     $scope.singleRestTime = undefined;
     $scope.roundTimeRemaining = undefined;
     workoutFactory.workoutData = {};
-  }
+    $interval.cancel(roundInterval);
+    workoutFactory.workoutData.timerStarted = false;
+  };
 
   $scope.roundIntervalFunc = function() {
     if(!$scope.singleRoundTime) {
       return;
     }
-    console.log('roundIntervalFunc');
     $scope.playSound('sounds/Boxing_arena.mp3');
     roundInterval = $interval(function() {
+      $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
       $scope.checkRounds();
       $scope.calculateWorkOut();
-      $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
     }, 1000);
   };
 
   $scope.$on('$ionicView.beforeEnter', function() {
+    console.log('beforeEnter');
+    console.log('obj', workoutFactory.workoutData);
+    console.log('wtf', workoutFactory.workoutData.timerStarted);
+    if(workoutFactory.workoutData == undefined || workoutFactory.workoutData.timerStarted == true) {
+      return;
+    }
     $scope.setVariables();
     $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
   });
 
   $scope.$on('$ionicView.enter', function() {
     console.log('onEnter');
+    console.log('obj', workoutFactory.workoutData);
+    console.log('double wtf', workoutFactory.workoutData.restTime);
+    console.log('wtf', workoutFactory.workoutData.timerStarted);
+    if(workoutFactory.workoutData == undefined || workoutFactory.workoutData.timerStarted == true) {
+      return;
+    }
+    workoutFactory.workoutData.timerStarted = true;
     $scope.roundIntervalFunc();
   });
 
   $scope.$on('$ionicView.beforeLeave', function() {
-    console.log('beforeLeave');
+    if($scope.roundsRemaining !== 0) {
+      return;
+    }
     $scope.resetObjs();
   });
 
