@@ -2,6 +2,7 @@ angular.module('app.controllers', [])
 
 .controller('planYourWorkoutCtrl', function($scope, $state, workoutFactory) {
   $scope.setWorkout = function() {
+    console.log('setWorkout');
     $scope.workout = {
       rounds: '12',
       roundsTime: '180',
@@ -10,6 +11,7 @@ angular.module('app.controllers', [])
   };
 
   $scope.submitWorkout = function() {
+    console.log('submitWorkout');
 
     $scope.workout.rounds = Number($scope.workout.rounds);
     $scope.workout.roundsTime = Number($scope.workout.roundsTime);
@@ -24,6 +26,7 @@ angular.module('app.controllers', [])
   };
 
   $scope.$on('$ionicView.beforeEnter', function() {
+    console.log('beforeEnter planning');
     $scope.setWorkout();
   });
 
@@ -46,14 +49,15 @@ angular.module('app.controllers', [])
 
   $scope.setVariables = function() {
     $scope.roundsCompleted = 0;
-    $scope.roundsRemaining = workoutFactory.workoutData.rounds;
+    $scope.roundsRemaining = workoutFactory.workoutData.rounds || 0;
     $scope.restsRemaining = workoutFactory.workoutData.rounds - 1;
     $scope.singleRoundTime = workoutFactory.workoutData.roundsTimeInMilliseconds;
     $scope.singleRestTime = workoutFactory.workoutData.restTimeInMilliseconds;
-    $scope.roundTimeRemaining = (workoutFactory.workoutData.roundsTimeInMilliseconds * workoutFactory.workoutData.rounds);
+    $scope.roundTimeRemaining = (workoutFactory.workoutData.roundsTimeInMilliseconds * workoutFactory.workoutData.rounds) || 0;
   };
 
   $scope.parseSeconds = function(totalMilliseconds) {
+    console.log('parseSeconds');
     var timeObj = {};
     var seconds = totalMilliseconds / 1000;
     var minutes = seconds / 60;
@@ -75,6 +79,12 @@ angular.module('app.controllers', [])
   };
 
   $scope.addZero = function(num) {
+    console.log('addZero');
+    console.log('typeof num', typeof num);
+    if(num === undefined || num === null) {
+      console.log('undefined/null');
+      return '00';
+    }
     if(num < 10) {
       num = '0' + num;
     }
@@ -158,14 +168,15 @@ angular.module('app.controllers', [])
     console.log('roundIntervalFunc');
     $scope.playSound('sounds/Boxing_arena.mp3');
     roundInterval = $interval(function() {
-      $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
       $scope.checkRounds();
       $scope.calculateWorkOut();
+      $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
     }, 1000);
   };
 
   $scope.$on('$ionicView.beforeEnter', function() {
     $scope.setVariables();
+    $scope.roundTimeRemainingObj = $scope.parseSeconds($scope.singleRoundTime);
   });
 
   $scope.$on('$ionicView.enter', function() {
